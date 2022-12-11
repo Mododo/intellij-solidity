@@ -86,6 +86,24 @@ class SolExpressionTypeProviderTest : SolTestBase() {
     assertEquals("bool", expr.type.toString())
   }
 
+  fun testV050DestructuringResult() {
+    InlineFile("""
+        contract A {
+            function someFunction() returns (uint128, bool) {
+                return (1, true);
+            }
+
+            function f() {
+                (x, y) = someFunction();
+                y;
+              //^
+            }
+        }
+    """)
+    val (expr, _) = findElementAndDataInEditor<SolExpression>()
+    assertEquals("bool", expr.type.toString())
+  }
+
   fun testFunctionParameter() = checkPrimitiveTypes { _, type ->
     """
         contract A {
